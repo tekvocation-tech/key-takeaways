@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .progress-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            height: 25px;
+            background: #f0f0f0;
+            border-radius: 12.5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            transition: width 0.5s ease-in-out;
+        }
+
+        .intern-list {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+        }
+
+        .intern-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .intern-item:last-child {
+            border-bottom: none;
+        }
+
+        .intern-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .status-badge {
+            margin-left: auto;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .submitted {
+            background: #e8f5e9;
+            color: #4CAF50;
+        }
+
+        .not-submitted {
+            background: #ffebee;
+            color: #f44336;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .submission-lists {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .list-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+        }
+
+        .submitted-list {
+            border-left: 5px solid #4CAF50;
+        }
+
+        .not-submitted-list {
+            border-left: 5px solid #f44336;
+        }
+
+        .list-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .list-header h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .list-header .count {
+            margin-left: auto;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .submitted-count {
+            background: #e8f5e9;
+            color: #4CAF50;
+        }
+
+        .not-submitted-count {
+            background: #ffebee;
+            color: #f44336;
+        }
+
+        .intern-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            transition: transform 0.2s ease;
+        }
+
+        .intern-item:hover {
+            transform: translateX(10px);
+            background: #f9f9f9;
+        }
+
+        .intern-item:last-child {
+            border-bottom: none;
+        }
+
+        .intern-details {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .intern-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .submission-lists {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .submission-details {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .status-submitted {
+            background-color: #4CAF50;
+        }
+
+        .status-pending {
+            background-color: #f44336;
+        }
+
+        .submission-time {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .export-btn {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0a0188, #380cd6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .splash-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #18056b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <h1>Tracker</h1>
+            <div class="loader"></div>
+        </div>
+    </div>
+    <div class="dashboard-container">
+        <div class="nav-buttons">
+            <h1>Submission Dashboard</h1>
+            <div>
+                <button class="export-btn" onclick="exportToCSV()">
+                    <i class="fas fa-download"></i> Export Report
+                </button>
+                <button class="btn" onclick="window.location.href='tracker.html'">
+                    <i class="fas fa-tasks"></i> Go to Tracker
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Total Interns</h3>
+                <div class="number" id="totalCount">0</div>
+            </div>
+            <div class="card">
+                <h3>Submitted</h3>
+                <div class="number" id="submittedCount">0</div>
+            </div>
+            <div class="card">
+                <h3>Pending</h3>
+                <div class="number" id="pendingCount">0</div>
+            </div>
+        </div>
+
+        <!-- Submission Lists -->
+        <div class="submission-lists">
+            <div class="list-container submitted-list">
+                <div class="list-header">
+                    <h3><i class="fas fa-check-circle"></i> Submitted</h3>
+                    <span class="count submitted-count" id="submittedListCount">0</span>
+                </div>
+                <div id="submittedInterns"></div>
+            </div>
+
+            <div class="list-container not-submitted-list">
+                <div class="list-header">
+                    <h3><i class="fas fa-clock"></i> Pending</h3>
+                    <span class="count not-submitted-count" id="notSubmittedListCount">0</span>
+                </div>
+                <div id="notSubmittedInterns"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadDashboardData() {
+            const interns = JSON.parse(localStorage.getItem('internsData')) || [];
+            
+            const submittedInterns = interns.filter(intern => intern.submitted);
+            const notSubmittedInterns = interns.filter(intern => !intern.submitted);
+            
+            // Update counts
+            document.getElementById('totalCount').textContent = interns.length;
+            document.getElementById('submittedCount').textContent = submittedInterns.length;
+            document.getElementById('pendingCount').textContent = notSubmittedInterns.length;
+            document.getElementById('submittedListCount').textContent = submittedInterns.length;
+            document.getElementById('notSubmittedListCount').textContent = notSubmittedInterns.length;
+
+            // Render Submitted List
+            const submittedList = document.getElementById('submittedInterns');
+            submittedList.innerHTML = submittedInterns.map((intern, index) => `
+                <div class="intern-item" style="animation-delay: ${index * 0.1}s">
+                    <div class="intern-details">
+                        <img src="${intern.image}" alt="${intern.name}" class="intern-image">
+                        <div>
+                            <span>${intern.name}</span>
+                            <div class="submission-time">
+                                Submitted: ${new Date(intern.submissionTime).toLocaleString()}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Render Not Submitted List
+            const notSubmittedList = document.getElementById('notSubmittedInterns');
+            notSubmittedList.innerHTML = notSubmittedInterns.map((intern, index) => `
+                <div class="intern-item" style="animation-delay: ${index * 0.1}s">
+                    <div class="intern-details">
+                        <img src="${intern.image}" alt="${intern.name}" class="intern-image">
+                        <span>${intern.name}</span>
+                    </div>
+                    <span class="status-badge not-submitted">Pending</span>
+                </div>
+            `).join('');
+        }
+
+        // Load dashboard data when page loads
+        loadDashboardData();
+
+        // Refresh data every 30 seconds
+        setInterval(loadDashboardData, 30000);
+
+        function exportToCSV() {
+            const interns = JSON.parse(localStorage.getItem('internsData')) || [];
+            const csvContent = [
+                ['Name', 'Status', 'Submission Time'],
+                ...interns.map(intern => [
+                    intern.name,
+                    intern.submitted ? 'Submitted' : 'Pending',
+                    intern.submissionTime ? new Date(intern.submissionTime).toLocaleString() : 'N/A'
+                ])
+            ];
+
+            const csvHeader = 'data:text/csv;charset=utf-8,';
+            const csvRows = csvContent.map(row => row.join(',')).join('\n');
+            const csvBlob = new Blob([csvHeader, csvRows], { type: 'text/csv;charset=utf-8' });
+            const csvUrl = URL.createObjectURL(csvBlob);
+
+            const a = document.createElement('a');
+            a.href = csvUrl;
+            a.download = 'submission_report.csv';
+            a.click();
+
+            URL.revokeObjectURL(csvUrl);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                splash.style.transition = 'opacity 0.5s';
+                setTimeout(() => splash.style.display = 'none', 500);
+            }, 2000); // Shows splash screen for 2 seconds
+        });
+    </script>
+</body>
+</html> 
